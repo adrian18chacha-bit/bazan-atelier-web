@@ -1,114 +1,74 @@
 import streamlit as st
 
-# 1. Configuración de página de alto nivel
-st.set_page_config(
-    page_title="Bazán Atelier | Tienda Oficial", 
-    page_icon="👗", 
-    layout="wide"
-)
+# 1. Configuración de página
+st.set_page_config(page_title="Bazán Atelier | Tienda", page_icon="👗", layout="wide")
 
-# 2. Estilo CSS Avanzado (Diseño "Premium")
+# 2. CSS de Lujo
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400&display=swap');
-
-    /* Fondo y fuentes globales */
     .main { background-color: #fdfaf7; }
-    html, body, [class*="css"]  {
-        font-family: 'Lato', sans-serif;
-        color: #4a3728;
+    h1 { font-family: 'Playfair Display', serif; color: #5d4037; text-align: center; font-size: 3.5rem !important; }
+    .stButton>button { width: 100%; border-radius: 12px; font-weight: bold; }
+    /* Estilo para los botones de filtro */
+    div[data-testid="stHorizontalBlock"] button {
+        background-color: white !important;
+        color: #5d4037 !important;
+        border: 1px solid #d7ccc8 !important;
     }
-
-    /* Título principal con estilo de revista */
-    h1 { 
-        font-family: 'Playfair Display', serif;
-        color: #5d4037; 
-        font-size: 3.5rem !important;
-        text-align: center;
-        margin-bottom: 0px;
+    div[data-testid="stHorizontalBlock"] button:hover {
+        border-color: #5d4037 !important;
+        background-color: #f5f5f5 !important;
     }
-
-    /* Tarjetas de productos con sombra suave */
-    div[data-testid="stColumn"] {
-        background-color: white;
-        padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
-        border: 1px solid #f1ece7;
-        transition: transform 0.3s ease;
-    }
-    
-    div[data-testid="stColumn"]:hover {
-        transform: translateY(-5px);
-    }
-
-    /* Botón de WhatsApp elegante */
-    .stButton>button {
-        width: 100%;
-        background-color: #25D366 !important;
-        color: white !important;
-        border: none;
-        padding: 10px;
-        font-weight: bold;
-        border-radius: 12px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-    }
-    
-    /* Quitar el menú de arriba de Streamlit para más limpieza */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Sidebar (Barra Lateral) con información de confianza
+# 3. Sidebar con Botón de Mapas
 with st.sidebar:
     st.image("logo.jpg", width=220)
-    st.markdown("---")
     st.title("Bazán Atelier")
     st.write("✨ *Diseño de autor en Lima*")
     
-    st.markdown("### 🛍️ Proceso de Compra")
-    st.write("1. Selecciona tu modelo favorito.")
-    st.write("2. Consulta disponibilidad vía WhatsApp.")
-    st.write("3. ¡Coordinamos tu talla y envío!")
+    st.markdown("---")
+    st.write("📍 **Ubicación:**")
+    # SUSTITUYE este link por la dirección real de Google Maps de tu prima
+    st.link_button("📍 Ver en Google Maps", "https://goo.gl/maps/ejemplo_lima")
     
     st.markdown("---")
-    st.write("📍 **Showroom:** Lima, Perú")
-    st.write("📸 **IG:** [@bazan_atelier](https://www.instagram.com/bazan_atelier/)")
-    
-    st.info("💡 Cada prenda es confeccionada con telas de alta calidad para asegurar un calce perfecto.")
+    st.info("📦 **Envíos:** Lima y todo el Perú vía Olva o Shalom.")
 
-# 4. Cuerpo Principal
+# 4. Títulos
 st.markdown("<h1>Bazán Atelier</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; font-style: italic; font-size: 1.2rem; color: #8d7b6d;'>Prendas únicas para mujeres reales</p>", unsafe_allow_html=True)
 st.write("---")
 
-# Banner de promoción
-st.success("✨ **LANZAMIENTO WEB:** Usa el código **BAZAN10** y obtén un descuento especial en tu primer pedido.")
+# 5. LÓGICA DE FILTROS (Toque Tecnológico)
+st.markdown("<h3 style='text-align: center;'>Explora nuestra colección</h3>", unsafe_allow_html=True)
+categoria = st.radio("", ["Ver Todo", "Tops", "Pantalones", "Vestidos"], horizontal=True)
 
-# 5. Galería de Productos (2 columnas)
-col1, col2 = st.columns(2, gap="large")
+st.write("") # Espacio
 
-with col1:
-    # Cuando tengas la foto real, cámbiame por: st.image("nombre_archivo.jpg")
-    st.image("https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=500", caption="Nueva Colección")
-    st.subheader("Top Seda Marfil")
-    st.write("Un diseño ligero y elegante, ideal para eventos especiales o salidas casuales de lujo.")
-    st.markdown("#### **S/ 95.00**")
-    
-    btn_link = "https://wa.me/51937395562?text=Hola%20Bazán%20Atelier!%20Me%20interesa%20el%20Top%20Seda%20Marfil"
-    st.link_button("Pedir por WhatsApp 💬", btn_link)
+# 6. Base de datos de productos (Simulada para que el filtro funcione)
+# Esto es escalable: cuando ella te pase más fotos, solo añadimos líneas aquí
+productos = [
+    {"nombre": "Top Seda Marfil", "precio": "S/ 95", "cat": "Tops", "img": "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?q=80&w=500", "wa": "Top%20Seda%20Marfil"},
+    {"nombre": "Pantalón Sastrero Arena", "precio": "S/ 140", "cat": "Pantalones", "img": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=500", "wa": "Pantalón%20Sastrero%20Arena"},
+]
 
-with col2:
-    st.image("https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=500", caption="Favoritos")
-    st.subheader("Pantalón Sastrero Arena")
-    st.write("Corte clásico de tiro alto con tela fresca, diseñado para estilizar la figura.")
-    st.markdown("#### **S/ 140.00**")
-    
-    btn_link2 = "https://wa.me/51937395562?text=Hola%20Bazán%20Atelier!%20Me%20gustaría%20el%20Pantalón%20Sastrero%20Arena"
-    st.link_button("Pedir por WhatsApp 💬", btn_link2)
+# Filtrar productos según la elección
+productos_filtrados = [p for p in productos if categoria == "Ver Todo" or p["cat"] == categoria]
 
-# 6. Pie de página
+# 7. Mostrar productos en cuadrícula
+if not productos_filtrados:
+    st.warning(f"Próximamente más modelos en la categoría: {categoria}")
+else:
+    cols = st.columns(2)
+    for i, p in enumerate(productos_filtrados):
+        with cols[i % 2]:
+            st.image(p["img"])
+            st.subheader(p["nombre"])
+            st.markdown(f"**{p['precio']}**")
+            link_wa = f"https://wa.me/51937395562?text=Hola!%20Me%20interesa%20el%20{p['wa']}"
+            st.link_button(f"Consultar {p['nombre']}", link_wa)
+
 st.write("---")
-st.markdown("<p style='text-align: center; color: #bcaaa4;'>© 2026 Bazán Atelier | Desarrollado por Adrián Chávez - Ing. de Sistemas</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #bcaaa4;'>© 2026 Bazán Atelier | Lima, Perú</p>", unsafe_allow_html=True)
