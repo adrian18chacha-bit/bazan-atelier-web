@@ -1,11 +1,7 @@
 import streamlit as st
 
 # 1. Configuración de página
-st.set_page_config(
-    page_title="Bazán Atelier | Tienda Oficial", 
-    page_icon="👗", 
-    layout="wide"
-)
+st.set_page_config(page_title="Bazán Atelier | Tienda Oficial", page_icon="👗", layout="wide")
 
 # --- LÓGICA DEL CARRITO ---
 if 'carrito' not in st.session_state:
@@ -19,7 +15,7 @@ def eliminar_del_carrito(indice):
     st.session_state.carrito.pop(indice)
     st.rerun()
 
-# 2. CSS SANEADO (Sin errores de botones verticales)
+# 2. CSS PROFESIONAL (Blanco y Negro elegante)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400&display=swap');
@@ -29,53 +25,47 @@ st.markdown("""
     
     /* Tarjetas de producto */
     div[data-testid="stColumn"] {
-        background-color: white;
-        padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border: 1px solid #f1ece7;
-        margin-bottom: 25px;
+        background-color: white; padding: 25px; border-radius: 15px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.03); border: 1px solid #f1ece7;
     }
 
-    /* Botones principales */
+    /* Botones principales de la tienda */
     .stButton>button { 
-        width: 100%; 
-        border-radius: 12px; 
-        font-weight: bold; 
-        background-color: #25D366 !important; 
-        color: white !important; 
-        border: none;
+        width: 100%; border-radius: 8px; font-weight: bold; 
+        background-color: #25D366 !important; color: white !important; border: none;
     }
 
-    /* Botón X del carrito (Pequeño y circular) */
+    /* BOTÓN X DEL CARRITO (Negro y pequeño) */
     [data-testid="stSidebar"] button[kind="secondary"] {
-        padding: 0px !important;
-        height: 22px !important;
-        width: 22px !important;
-        min-width: 22px !important;
-        border-radius: 50% !important;
-        font-size: 12px !important;
-        color: #ff4b4b !important;
-        border: 1px solid #ff4b4b !important;
+        padding: 0px !important; height: 20px !important; width: 20px !important;
+        min-width: 20px !important; border-radius: 50% !important;
+        font-size: 10px !important; color: #333 !important;
+        border: 1px solid #ccc !important; background-color: white !important;
+    }
+
+    /* Botón Vaciar Carrito (Texto normal) */
+    .btn-vaciar button {
+        background-color: transparent !important; color: #888 !important;
+        border: 1px solid #eee !important; font-size: 0.8rem !important; height: 2em !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
 # 3. Sidebar (Carrito Limpio)
 with st.sidebar:
-    st.image("logo.jpg", width=180)
-    st.title("🛒 Mi Pedido")
+    st.image("logo.jpg", width=160)
+    st.title("Mi Pedido")
     
     if not st.session_state.carrito:
-        st.info("El carrito está vacío.")
+        st.write("El carrito está vacío.")
     else:
         total = 0
         resumen_wa = "Hola Bazán Atelier! Mi pedido es:%0A"
         
         for i, item in enumerate(st.session_state.carrito):
-            c1, c2 = st.columns([4, 1])
+            c1, c2 = st.columns([5, 1])
             with c1:
-                st.markdown(f"**{item['nombre']}**\nTalla: {item['talla']} | {item['precio']}")
+                st.markdown(f"**{item['nombre']}**\nTalla {item['talla']} | {item['precio']}")
             with c2:
                 if st.button("x", key=f"del_{i}"):
                     eliminar_del_carrito(i)
@@ -87,28 +77,25 @@ with st.sidebar:
         
         st.subheader(f"Total: S/ {total}")
         
-        # Botones finales
         st.link_button("🚀 Finalizar por WhatsApp", f"https://wa.me/51937395562?text={resumen_wa}%0ATotal: S/ {total}")
         st.link_button("💳 Pagar con Tarjeta/Yape", "https://link.mercadopago.com.pe/bazanatelier")
         
+        st.markdown('<div class="btn-vaciar">', unsafe_allow_html=True)
         if st.button("Vaciar Carrito"):
             st.session_state.carrito = []
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("---")
     st.write("📸 **IG:** [@bazan_atelier](https://www.instagram.com/bazan_atelier/)")
-    st.info("📦 **Envíos:** Lima y provincias.")
+    st.info("📦 **Envíos Lima y provincias**")
 
 # 4. Cuerpo Principal
 st.markdown("<h1>Bazán Atelier</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #8d7b6d;'>Prendas exclusivas hechas a medida</p>", unsafe_allow_html=True)
 st.write("---")
-
-st.success("✨ **LANZAMIENTO WEB:** Usa el código **BAZAN10** y obtén un descuento especial.")
 
 # 5. Filtros
 categoria = st.radio("", ["Ver Todo", "Tops", "Pantalones", "Vestidos"], horizontal=True)
-st.write("") 
 
 # 6. Base de Datos
 productos = [
@@ -126,7 +113,7 @@ for i, p in enumerate(productos_filtrados):
     with cols[i % 2]:
         st.image(p["img"], use_container_width=True)
         st.subheader(p["nombre"])
-        st.write(f"Precio: {p['precio']}")
+        st.write(f"**Precio: {p['precio']}**")
         talla_sel = st.selectbox(f"Talla:", p["tallas"], key=f"talla_{i}")
         
         if st.button(f"🛒 Añadir al carrito", key=f"btn_{i}"):
@@ -134,6 +121,4 @@ for i, p in enumerate(productos_filtrados):
 
 # 8. Pie de Página
 st.write("---")
-c1, c2 = st.columns([2, 1])
-with c1: st.markdown("© 2026 **Bazán Atelier** | Lima, Perú.")
-with c2: st.markdown("<p style='text-align: right; color: #bcaaa4;'>A. Chávez • Systems Eng.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #bcaaa4; font-size: 0.8rem;'>© 2026 Bazán Atelier | Desarrollo: A. Chávez • Systems Eng.</p>", unsafe_allow_html=True)
