@@ -1,9 +1,13 @@
 import streamlit as st
 
-# 1. Configuración de página
-st.set_page_config(page_title="Bazán Atelier | Tienda Oficial", page_icon="👗", layout="wide")
+# 1. Configuración de página SANA
+st.set_page_config(
+    page_title="Bazán Atelier | Tienda Oficial", 
+    page_icon="👗", 
+    layout="wide"
+)
 
-# --- LÓGICA DEL CARRITO ---
+# --- LÓGICA DEL CARRITO (Limpia y funcional) ---
 if 'carrito' not in st.session_state:
     st.session_state.carrito = []
 
@@ -15,40 +19,47 @@ def eliminar_del_carrito(indice):
     st.session_state.carrito.pop(indice)
     st.rerun()
 
-# 2. CSS ULTRA-REFRESCADO (X Pequeña y Detalles Pro)
+# 2. CSS NUEVO Y LIMPIO (No borres esto, es el secreto de la elegancia)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400&display=swap');
     
     .main { background-color: #fdfaf7; }
-    h1 { font-family: 'Playfair Display', serif; color: #5d4037; text-align: center; font-size: 3.5rem !important; margin-bottom: 0px; }
+    h1 { font-family: 'Playfair Display', serif; color: #5d4037; text-align: center; font-size: 3.5rem !important; }
     
     /* Tarjetas de producto */
     div[data-testid="stColumn"] {
-        background-color: white; padding: 25px; border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f1ece7;
+        background-color: white;
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid #f1ece7;
+        margin-bottom: 25px;
     }
 
-    /* BOTÓN X PEQUEÑO Y FINO */
-    button[kind="secondary"] {
+    /* Botones de acción principal (Verde WA) */
+    .stButton>button { 
+        width: 100%; 
+        border-radius: 12px; 
+        font-weight: bold; 
+        background-color: #25D366 !important; 
+        color: white !important; 
+        border: none;
+        height: 3em;
+    }
+
+    /* BOTÓN X PEQUEÑO Y FINO (Este es el que queríamos) */
+    [data-testid="stSidebar"] [kind="secondary"] {
         padding: 0px 5px !important;
-        height: 25px !important;
-        width: 25px !important;
-        min-width: 25px !important;
+        height: 20px !important;
+        width: 20px !important;
+        min-width: 20px !important;
         border-radius: 50% !important;
         font-size: 10px !important;
         line-height: 1 !important;
         border: 1px solid #ff4b4b !important;
         color: #ff4b4b !important;
-    }
-
-    /* Botones de acción principal */
-    .stButton>button { border-radius: 12px; font-weight: 600; }
-    
-    /* Estilo del item en el carrito */
-    .cart-box {
-        background-color: #fff; border: 1px solid #eee;
-        padding: 10px; border-radius: 10px; margin-bottom: 5px;
+        margin-top: 5px;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -59,53 +70,59 @@ with st.sidebar:
     st.title("🛒 Mi Pedido")
     
     if not st.session_state.carrito:
-        st.info("El carrito está vacío.")
+        st.info("Tu carrito está vacío.")
     else:
         total = 0
         resumen_wa = "Hola Bazán Atelier! Mi pedido es:%0A"
-        for i, item in enumerate(st.session_state.carrito):
-            # Fila de producto con X pequeña
-            c1, c2 = st.columns([5, 1])
-            with c1:
-                st.markdown(f"**{item['nombre']}**\n{item['talla']} | {item['precio']}")
-            with c2:
-                if st.button("X", key=f"del_{i}"):
-                    eliminar_del_carrito(i)
-            st.write("---")
-            
-            precio_num = int(item['precio'].replace('S/ ', ''))
-            total += precio_num
-            resumen_wa += f"- {item['nombre']} ({item['talla']})%0A"
+        
+        # Un contenedor ordenado para los productos
+        with st.container():
+            for i, item in enumerate(st.session_state.carrito):
+                col1, col2 = st.columns([5, 1])
+                with col1:
+                    st.markdown(f"**{item['nombre']}**\nTalla: {item['talla']} | {item['precio']}")
+                with col2:
+                    # Este es el botón de X que ahora será pequeño
+                    if st.button("X", key=f"del_{i}"):
+                        eliminar_del_carrito(i)
+                st.write("---")
+                
+                precio_num = int(item['precio'].replace('S/ ', ''))
+                total += precio_num
+                resumen_wa += f"- {item['nombre']} ({item['talla']})%0A"
         
         st.subheader(f"Total: S/ {total}")
         
-        # Botones de Pago y WA
-        st.link_button("💬 Finalizar por WhatsApp", f"https://wa.me/51937395562?text={resumen_wa}%0ATotal: S/ {total}")
-        st.link_button("💳 Pago con Tarjeta/Yape", "https://link.mercadopago.com.pe/bazanatelier")
+        # Botones de Acción Final
+        link_final = f"https://wa.me/51937395562?text={resumen_wa}%0ATotal: S/ {total}"
+        st.link_button("🚀 Finalizar Pedido por WhatsApp", link_final)
+        st.link_button("💳 Pagar con Tarjeta / Yape", "https://link.mercadopago.com.pe/bazanatelier")
         
         if st.button("Vaciar Carrito"):
             st.session_state.carrito = []
             st.rerun()
 
     st.markdown("---")
+    # DETALLE RECUPERADO: Instagram y Ubicación
     st.write("📸 **IG:** [@bazan_atelier](https://www.instagram.com/bazan_atelier/)")
     st.write("📍 **Ubicación:**")
     st.link_button("📍 Ver en Google Maps", "https://goo.gl/maps/ejemplo_lima")
-    st.info("📦 **Envíos:** Lima y provincias.")
+    st.info("📦 **Envíos:** Lima y todo el Perú vía Olva o Shalom.")
 
-# 4. Cuerpo Principal
+# 4. Cuerpo Principal (Catálogo)
 st.markdown("<h1>Bazán Atelier</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #8d7b6d;'>Diseño de autor en Lima</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: #8d7b6d;'>Prendas exclusivas hechas a medida</p>", unsafe_allow_html=True)
 st.write("---")
 
-# DETALLE RECUPERADO: Frase verde
-st.success("✨ **LANZAMIENTO WEB:** Usa el código **BAZAN10** y obtén un descuento especial.")
+# DETALLE RECUPERADO: Frase verde de descuento
+st.success("✨ **LANZAMIENTO WEB:** Usa el código **BAZAN10** y obtén un descuento especial en tu primer pedido.")
 
-# 5. Filtros
+# 5. Filtros Interactivos (Bien diseñados)
+st.markdown("<h3 style='text-align: center;'>Nuestra Colección</h3>", unsafe_allow_html=True)
 categoria = st.radio("", ["Ver Todo", "Tops", "Pantalones", "Vestidos"], horizontal=True)
-st.write("")
+st.write("") 
 
-# 6. Base de Datos
+# 6. Base de Datos (Con Tallas)
 productos = [
     {"nombre": "Top Seda Marfil", "precio": "S/ 95", "cat": "Tops", "img": "https://images.unsplash.com/photo-1551163943-3f6a855d1153?q=80&w=500", "tallas": ["S", "M", "L"]},
     {"nombre": "Pantalón Sastrero Arena", "precio": "S/ 140", "cat": "Pantalones", "img": "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?q=80&w=500", "tallas": ["28", "30", "32"]},
@@ -115,21 +132,24 @@ productos = [
 
 productos_filtrados = [p for p in productos if categoria == "Ver Todo" or p["cat"] == categoria]
 
-# 7. Galería
+# 7. Galería Dinámica
 cols = st.columns(2, gap="large")
 for i, p in enumerate(productos_filtrados):
     with cols[i % 2]:
         st.image(p["img"], use_container_width=True)
         st.subheader(p["nombre"])
         st.write(f"Precio: {p['precio']}")
-        talla_sel = st.selectbox(f"Talla:", p["tallas"], key=f"talla_{i}")
         
-        # Botón Añadir (Verde WA por defecto del CSS previo)
+        talla_sel = st.selectbox(f"Selecciona talla:", p["tallas"], key=f"talla_{i}")
+        
+        # Botón Añadir al carrito (Verde WA por el CSS previo)
         if st.button(f"🛒 Añadir al carrito", key=f"btn_{i}"):
             agregar_al_carrito(p["nombre"], p["precio"], talla_sel)
 
-# 8. Pie de Página
+# 8. Pie de Página Profesional
 st.write("---")
-f1, f2 = st.columns([2, 1])
-f1.markdown("© 2026 **Bazán Atelier** | Lima, Perú.")
-f2.markdown("<p style='text-align: right; color: #bcaaa4;'>A. Chávez • Systems Eng.</p>", unsafe_allow_html=True)
+cols_footer = st.columns([2, 1])
+with cols_footer[0]:
+    st.markdown("© 2026 **Bazán Atelier** | Lima, Perú.")
+with cols_footer[1]:
+    st.markdown("<p style='text-align: right; color: #bcaaa4;'>A. Chávez • Systems Engineering</p>", unsafe_allow_html=True)
