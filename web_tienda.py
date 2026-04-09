@@ -15,91 +15,95 @@ def eliminar_del_carrito(indice):
     st.session_state.carrito.pop(indice)
     st.rerun()
 
-# 2. CSS AVANZADO (Diseño Limpio y Moderno)
+# 2. CSS ULTRA-REFRESCADO (X Pequeña y Detalles Pro)
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400&display=swap');
     
     .main { background-color: #fdfaf7; }
-    h1 { font-family: 'Playfair Display', serif; color: #5d4037; text-align: center; font-size: 3.5rem !important; margin-bottom: 10px; }
+    h1 { font-family: 'Playfair Display', serif; color: #5d4037; text-align: center; font-size: 3.5rem !important; margin-bottom: 0px; }
     
-    /* Estilo de las tarjetas de producto */
+    /* Tarjetas de producto */
     div[data-testid="stColumn"] {
-        background-color: white;
-        padding: 25px;
-        border-radius: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border: 1px solid #f1ece7;
+        background-color: white; padding: 25px; border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid #f1ece7;
     }
 
-    /* Botones Pro */
-    .stButton>button { border-radius: 10px; font-weight: 600; transition: 0.3s; }
-    .btn-comprar button { background-color: #25D366 !important; color: white !important; border: none; }
-    .btn-pago button { background-color: #009EE3 !important; color: white !important; border: none; margin-top: 5px; }
+    /* BOTÓN X PEQUEÑO Y FINO */
+    button[kind="secondary"] {
+        padding: 0px 5px !important;
+        height: 25px !important;
+        width: 25px !important;
+        min-width: 25px !important;
+        border-radius: 50% !important;
+        font-size: 10px !important;
+        line-height: 1 !important;
+        border: 1px solid #ff4b4b !important;
+        color: #ff4b4b !important;
+    }
+
+    /* Botones de acción principal */
+    .stButton>button { border-radius: 12px; font-weight: 600; }
     
-    /* Diseño del carrito en sidebar */
-    .cart-item {
-        background-color: #f8f9fa;
-        padding: 10px;
-        border-radius: 10px;
-        margin-bottom: 10px;
-        border-left: 4px solid #5d4037;
+    /* Estilo del item en el carrito */
+    .cart-box {
+        background-color: #fff; border: 1px solid #eee;
+        padding: 10px; border-radius: 10px; margin-bottom: 5px;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. Sidebar (Carrito Ordenado)
+# 3. Sidebar (Carrito Limpio + Info Completa)
 with st.sidebar:
     st.image("logo.jpg", width=200)
     st.title("🛒 Mi Pedido")
-    st.write("---")
     
     if not st.session_state.carrito:
-        st.info("Tu carrito está vacío.")
+        st.info("El carrito está vacío.")
     else:
         total = 0
         resumen_wa = "Hola Bazán Atelier! Mi pedido es:%0A"
-        
         for i, item in enumerate(st.session_state.carrito):
-            with st.container():
-                # Fila de producto
-                c1, c2 = st.columns([4, 1])
-                c1.markdown(f"**{item['nombre']}**\nTalla: {item['talla']} | {item['precio']}")
-                if c2.button("❌", key=f"del_{i}"):
+            # Fila de producto con X pequeña
+            c1, c2 = st.columns([5, 1])
+            with c1:
+                st.markdown(f"**{item['nombre']}**\n{item['talla']} | {item['precio']}")
+            with c2:
+                if st.button("X", key=f"del_{i}"):
                     eliminar_del_carrito(i)
-                st.write("---")
+            st.write("---")
             
             precio_num = int(item['precio'].replace('S/ ', ''))
             total += precio_num
-            resumen_wa += f"- {item['nombre']} (Talla: {item['talla']})%0A"
+            resumen_wa += f"- {item['nombre']} ({item['talla']})%0A"
         
         st.subheader(f"Total: S/ {total}")
         
-        # Botones de Acción Final
-        st.markdown(f'<div class="btn-comprar">', unsafe_allow_html=True)
-        st.link_button("💬 Pedir por WhatsApp", f"https://wa.me/51937395562?text={resumen_wa}%0ATotal: S/ {total}")
-        st.markdown('</div>', unsafe_allow_html=True)
+        # Botones de Pago y WA
+        st.link_button("💬 Finalizar por WhatsApp", f"https://wa.me/51937395562?text={resumen_wa}%0ATotal: S/ {total}")
+        st.link_button("💳 Pago con Tarjeta/Yape", "https://link.mercadopago.com.pe/bazanatelier")
         
-        st.markdown(f'<div class="btn-pago">', unsafe_allow_html=True)
-        # CONFIGURACIÓN: Aquí va el link de Mercado Pago de tu prima
-        st.link_button("💳 Pagar con Tarjeta / Yape", "https://link.mercadopago.com.pe/bazanatelier") 
-        st.markdown('</div>', unsafe_allow_html=True)
-
         if st.button("Vaciar Carrito"):
             st.session_state.carrito = []
             st.rerun()
 
     st.markdown("---")
-    st.write("📸 [@bazan_atelier](https://www.instagram.com/bazan_atelier/)")
+    st.write("📸 **IG:** [@bazan_atelier](https://www.instagram.com/bazan_atelier/)")
+    st.write("📍 **Ubicación:**")
+    st.link_button("📍 Ver en Google Maps", "https://goo.gl/maps/ejemplo_lima")
+    st.info("📦 **Envíos:** Lima y provincias.")
 
 # 4. Cuerpo Principal
 st.markdown("<h1>Bazán Atelier</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: #8d7b6d;'>Exclusividad y elegancia en cada prenda</p>", unsafe_allow_html=True)
-
-# 5. Filtros con mejor estilo
-st.write("")
-categoria = st.radio("", ["Ver Todo", "Tops", "Pantalones", "Vestidos"], horizontal=True)
+st.markdown("<p style='text-align: center; color: #8d7b6d;'>Diseño de autor en Lima</p>", unsafe_allow_html=True)
 st.write("---")
+
+# DETALLE RECUPERADO: Frase verde
+st.success("✨ **LANZAMIENTO WEB:** Usa el código **BAZAN10** y obtén un descuento especial.")
+
+# 5. Filtros
+categoria = st.radio("", ["Ver Todo", "Tops", "Pantalones", "Vestidos"], horizontal=True)
+st.write("")
 
 # 6. Base de Datos
 productos = [
@@ -111,20 +115,21 @@ productos = [
 
 productos_filtrados = [p for p in productos if categoria == "Ver Todo" or p["cat"] == categoria]
 
-# 7. Galería Pro
+# 7. Galería
 cols = st.columns(2, gap="large")
 for i, p in enumerate(productos_filtrados):
     with cols[i % 2]:
         st.image(p["img"], use_container_width=True)
         st.subheader(p["nombre"])
-        st.markdown(f"**Precio: {p['precio']}**")
+        st.write(f"Precio: {p['precio']}")
         talla_sel = st.selectbox(f"Talla:", p["tallas"], key=f"talla_{i}")
         
+        # Botón Añadir (Verde WA por defecto del CSS previo)
         if st.button(f"🛒 Añadir al carrito", key=f"btn_{i}"):
             agregar_al_carrito(p["nombre"], p["precio"], talla_sel)
 
-# 8. Footer
+# 8. Pie de Página
 st.write("---")
 f1, f2 = st.columns([2, 1])
-f1.write("© 2026 **Bazán Atelier** | Lima, Perú")
-f2.markdown("<p style='text-align: right; color: #bcaaa4;'>Desarrollo: A. Chávez • Sistemas</p>", unsafe_allow_html=True)
+f1.markdown("© 2026 **Bazán Atelier** | Lima, Perú.")
+f2.markdown("<p style='text-align: right; color: #bcaaa4;'>A. Chávez • Systems Eng.</p>", unsafe_allow_html=True)
