@@ -1,7 +1,11 @@
 import streamlit as st
 
-# 1. Configuración de página
-st.set_page_config(page_title="Bazán Atelier | Tienda Oficial", page_icon="👗", layout="wide")
+# 1. Configuración de página con título y layout ancho
+st.set_page_config(
+    page_title="Bazán Atelier | Tienda Oficial", 
+    page_icon="👗", 
+    layout="wide"
+)
 
 # --- LÓGICA DE SEGURIDAD PARA EL CARRITO ---
 if 'carrito' in st.session_state and isinstance(st.session_state.carrito, list):
@@ -15,6 +19,7 @@ def agregar_al_carrito(nombre, precio, talla):
     if item_id in st.session_state.carrito:
         st.session_state.carrito[item_id]['cantidad'] += 1
     else:
+        # Limpiamos el precio para que sea un número entero
         precio_limpio = int(precio.replace('S/ ', '').replace(',', ''))
         st.session_state.carrito[item_id] = {
             "nombre": nombre, 
@@ -30,26 +35,37 @@ def ajustar_cantidad(item_id, delta):
         del st.session_state.carrito[item_id]
     st.rerun()
 
-# CÁLCULO DE CANTIDAD TOTAL
+# CÁLCULO DE CANTIDAD TOTAL PARA EL ICONO
 cantidad_total = sum(item['cantidad'] for item in st.session_state.carrito.values())
 
-# 2. CSS "BLACK & GRAY" CON DETALLES RECUPERADOS
+# 2. CSS "BLACK & GRAY" CON DETALLES Y DISEÑO RESPONSIVO (NUEVO)
 st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@300;400&display=swap');
     
     .main {{ background-color: #ffffff; }}
+    
+    /* Fuentes principales */
     h1 {{ font-family: 'Playfair Display', serif; color: #1a1a1a; text-align: center; font-size: 3rem !important; margin-bottom: 0px; }}
     
-    /* Botones Pro Negros */
+    /* Tarjetas de producto minimalistas */
+    div[data-testid="stColumn"] {{
+        background-color: #ffffff; padding: 20px; border-radius: 10px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.05); border: 1px solid #f0f0f0;
+        margin-bottom: 25px; /* Espacio entre tarjetas */
+    }}
+
+    /* BOTONES NEGROS (ESTILO PRO) */
     .stButton>button {{ 
         width: 100%; border-radius: 5px; font-weight: 300; letter-spacing: 1px;
         background-color: #1a1a1a !important; color: white !important; border: none; 
         transition: 0.4s; height: 3em;
     }}
-    .stButton>button:hover {{ background-color: #444444 !important; transform: translateY(-1px); }}
+    .stButton>button:hover {{
+        background-color: #444444 !important; transform: translateY(-1px);
+    }}
 
-    /* Cabecera del Carrito */
+    /* Diseño del Icono de Carrito en Cabecera */
     .cart-header {{
         display: flex; align-items: center; justify-content: flex-end;
         padding: 10px 30px; margin-top: -50px;
@@ -61,6 +77,17 @@ st.markdown(f"""
         border-radius: 50%; padding: 1px 5px; font-size: 9px;
     }}
     .cart-text {{ font-family: 'Lato', sans-serif; font-size: 0.85rem; color: #1a1a1a; margin: 0; }}
+
+    /* --- MEDIA QUERIES PARA DISEÑO RESPONSIVO (SOLUCIÓN DEL CELULAR) --- */
+    /* Cuando la pantalla sea más chica que 768px (celulares) */
+    @media (max-width: 768px) {{
+        /* Forzamos a que las columnas de Streamlit ocupen todo el ancho (1 columna) */
+        [data-testid="stColumn"] {{
+            width: 100% !important;
+            flex: 1 1 100% !important;
+            min-width: 100% !important;
+        }}
+    }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -74,7 +101,7 @@ st.markdown(f"""
     </div>
     """, unsafe_allow_html=True)
 
-# 4. Sidebar (INFO COMPLETA RECUPERADA)
+# 4. Sidebar (INFO COMPLETA)
 with st.sidebar:
     st.image("logo.jpg", width=130)
     st.markdown("### MI PEDIDO")
@@ -85,8 +112,10 @@ with st.sidebar:
     else:
         total_pagar = 0
         resumen_wa = "Hola Bazán Atelier! Mi pedido es:%0A"
+        
         for item_id, item in st.session_state.carrito.items():
             st.markdown(f"**{item['nombre']}** ({item['talla']})")
+            
             c1, c2, c3 = st.columns([1, 1, 1])
             with c1:
                 if st.button("－", key=f"min_{item_id}"): ajustar_cantidad(item_id, -1)
@@ -94,6 +123,7 @@ with st.sidebar:
                 st.markdown(f"<p style='text-align:center; padding-top:5px;'>{item['cantidad']}</p>", unsafe_allow_html=True)
             with c3:
                 if st.button("＋", key=f"add_{item_id}"): ajustar_cantidad(item_id, 1)
+            
             subtotal = item['precio'] * item['cantidad']
             total_pagar += subtotal
             st.write(f"Subtotal: S/ {subtotal}")
@@ -101,14 +131,17 @@ with st.sidebar:
             resumen_wa += f"- {item['nombre']} ({item['talla']}) x{item['cantidad']}%0A"
 
         st.subheader(f"Total: S/ {total_pagar}")
+        
+        # Botones finales
         st.link_button("🚀 ENVIAR A WHATSAPP", f"https://wa.me/51937395562?text={resumen_wa}%0ATotal: S/ {total_pagar}")
         st.link_button("💳 PAGAR CON TARJETA", "https://link.mercadopago.com.pe/bazanatelier")
+        
         if st.button("VACIAR TODO"):
             st.session_state.carrito = {}
             st.rerun()
 
     st.markdown("---")
-    # DETALLES RECUPERADOS
+    # DETALLES: Instagram, Ubicación y Envíos
     st.write("📸 **IG:** [@bazan_atelier](https://www.instagram.com/bazan_atelier/)")
     st.write("📍 **Ubicación:**")
     st.link_button("🗺️ Ver en Google Maps", "https://goo.gl/maps/ejemplo_lima")
@@ -118,10 +151,11 @@ with st.sidebar:
 st.markdown("<h1>Bazán Atelier</h1>", unsafe_allow_html=True)
 st.write("---")
 
-# DETALLE RECUPERADO: Frase verde de lanzamiento
+# Frase de lanzamiento recuperada
 st.success("✨ **LANZAMIENTO WEB:** Usa el código **BAZAN10** y obtén un descuento especial.")
 
 # Filtros
+st.markdown("<style>div[role='radiogroup'] { justify-content: center; }</style>", unsafe_allow_html=True)
 categoria = st.radio("", ["Ver Todo", "Tops", "Pantalones", "Vestidos"], horizontal=True)
 st.write("") 
 
@@ -135,7 +169,7 @@ productos = [
 
 productos_filtrados = [p for p in productos if categoria == "Ver Todo" or p["cat"] == categoria]
 
-# 7. Galería
+# 7. Galería Dinámica
 cols = st.columns(2, gap="large")
 for i, p in enumerate(productos_filtrados):
     with cols[i % 2]:
@@ -143,6 +177,8 @@ for i, p in enumerate(productos_filtrados):
         st.subheader(p["nombre"])
         st.write(f"S/ {p['precio']}")
         talla_sel = st.selectbox(f"TALLA:", p["tallas"], key=f"talla_{i}")
+        
+        # Botón con el nuevo color oscuro
         if st.button(f"🛒 AÑADIR", key=f"btn_{i}"):
             agregar_al_carrito(p["nombre"], p["precio"], talla_sel)
 
